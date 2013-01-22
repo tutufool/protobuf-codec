@@ -1,2 +1,7 @@
 /target
 protobuf-codec.i*
+.settings
+.project
+.classpath
+*.exe
+*.log
