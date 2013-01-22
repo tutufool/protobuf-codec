@@ -12,12 +12,13 @@ import javax.xml.stream.XMLStreamWriter;
 
 import protobuf.codec.AbstractCodec;
 import protobuf.codec.ParseException;
-import protobuf.codec.Codec.Feature;
 
+import com.ctc.wstx.api.InvalidCharHandler.ReplacingHandler;
+import com.ctc.wstx.api.WstxOutputProperties;
 import com.google.protobuf.ExtensionRegistry;
 import com.google.protobuf.Message;
-import com.google.protobuf.UnknownFieldSet;
 import com.google.protobuf.Message.Builder;
+import com.google.protobuf.UnknownFieldSet;
 
 /**
  * Xml-protobuf serializer/deserializer.Relies on stax(woodstox) as the underlying parser.
@@ -63,6 +64,11 @@ public class XmlCodec extends AbstractCodec {
     protected void writeToStream(Message message, Writer writer)
             throws IOException {
         try {
+			if ("true".equalsIgnoreCase(String.valueOf(getFeature(Feature.REPLACE_EMPTY_CHAR)))) {
+				XML_OUTPUT_FACTORY.setProperty(WstxOutputProperties.P_OUTPUT_INVALID_CHAR_HANDLER, new ReplacingHandler(' '));
+			}
+        	
+        	
             XMLStreamWriter xmlwriter = XML_OUTPUT_FACTORY.createXMLStreamWriter(writer);
             xmlwriter.writeStartDocument();
             xmlwriter.writeStartElement(getRootElementName(message));
@@ -93,6 +99,7 @@ public class XmlCodec extends AbstractCodec {
             case FIELD_NAME_READ_SUBSTITUTES:
             case FIELD_NAME_WRITE_SUBSTITUTES:
             case STRIP_FIELD_NAME_UNDERSCORES:
+            case REPLACE_EMPTY_CHAR:
             //noop Already handled
                 break;
             default:

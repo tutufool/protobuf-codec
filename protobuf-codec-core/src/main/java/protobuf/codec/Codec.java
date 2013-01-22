@@ -160,6 +160,9 @@ public interface Codec {
         STRIP_FIELD_NAME_UNDERSCORES,
         /** Provide field name substitutes for reading and writing from/to a protobuf stream*/
         FIELD_NAME_READ_SUBSTITUTES,
-        FIELD_NAME_WRITE_SUBSTITUTES;
+        FIELD_NAME_WRITE_SUBSTITUTES,
+        
+        /** replace empty char < \u0020 **/
+        REPLACE_EMPTY_CHAR;
     }
 }

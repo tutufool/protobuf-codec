@@ -149,10 +149,7 @@ public class XmlReader {
 
                 break;
             case STRING:
-                xmlreader.next();// Move past
-                fieldValue = xmlreader.getText();
-                value = fieldValue;
-                xmlreader.next();
+                value = getText(xmlreader);
                 break;
             case ENUM:
                 xmlreader.next();// Move past
@@ -170,9 +167,7 @@ public class XmlReader {
                 value = parseElement(newBuilder, xmlreader, extnRegistry, featureMap).build();
                 break;
             case BYTE_STRING:
-                xmlreader.next();// Move past
-                value = ByteString.copyFrom(Base64.decodeBase64(xmlreader.getText()));
-                xmlreader.next();
+                value = ByteString.copyFrom(Base64.decodeBase64(getText(xmlreader)));
                 break;
             default:
                 throw new UnsupportedEncodingException(String.format(
@@ -180,4 +175,15 @@ public class XmlReader {
         }
         return value;
     }
+    
+	private static String getText(XMLStreamReader xmlReader)
+			throws XMLStreamException {
+
+		StringBuilder sb = new StringBuilder();
+		while (xmlReader.next() == XMLStreamConstants.CHARACTERS) {
+			sb.append(xmlReader.getText());
+		}
+
+		return sb.toString();
+	}
 }
