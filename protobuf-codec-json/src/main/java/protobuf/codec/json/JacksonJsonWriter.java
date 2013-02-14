@@ -28,15 +28,6 @@ public class JacksonJsonWriter {
 
     public static void generateJSONFields(Message message, JsonGenerator generator, Map<Feature, Object> featureMap) throws IOException {
 
-        generator.configure(org.codehaus.jackson.JsonGenerator.Feature.AUTO_CLOSE_TARGET, (Boolean) featureMap.get(Feature.CLOSE_STREAM));
-
-        if (AbstractCodec.prettyPrint(featureMap)) {
-            generator.useDefaultPrettyPrinter();
-        }
-        if (!AbstractCodec.closeStream(featureMap)) {
-            generator.configure(org.codehaus.jackson.JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);
-        }
-
         generator.writeStartObject();
         Iterator<Map.Entry<FieldDescriptor, Object>> iterator = message.getAllFields().entrySet().iterator(); // Get all set fields
         while (iterator.hasNext()) {
