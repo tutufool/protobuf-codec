@@ -69,7 +69,16 @@ public class JsonCodec extends AbstractCodec {
     protected void writeToStream(Message message, Writer writer) throws IOException {
         JsonFactory jsonFactory = new JsonFactory();
         JsonGenerator generator = jsonFactory.createJsonGenerator(writer);
-        JacksonJsonWriter.generateJSONFields(message, generator, getAllFeaturesSet());
+
+        Map<Feature, Object> featureMap = getAllFeaturesSet();
+        generator.configure(org.codehaus.jackson.JsonGenerator.Feature.AUTO_CLOSE_TARGET, (Boolean) featureMap.get(Feature.CLOSE_STREAM));
+        if (AbstractCodec.prettyPrint(featureMap)) {
+            generator.useDefaultPrettyPrinter();
+        }
+        if (!AbstractCodec.closeStream(featureMap)) {
+            generator.configure(org.codehaus.jackson.JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);
+        }
+        JacksonJsonWriter.generateJSONFields(message, generator, featureMap);
         generator.close();
     }
 
